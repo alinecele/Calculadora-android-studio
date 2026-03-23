@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -89,6 +89,8 @@ fun CalculadoraScreen(
                 title = {
                     Text(
                         text = "Calculadora",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.headlineMedium,
                         color = Color.White
                     )
@@ -120,14 +122,33 @@ fun CalculadoraScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(all = 24.dp),
+                        .padding(horizontal = 24.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     row.forEach { number ->
+                        val buttonShape = RoundedCornerShape(22.dp)
+
                         Button(
-                            modifier = Modifier.size(64.dp),
-                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(78.dp)
+                                .shadow(
+                                    elevation = 12.dp,
+                                    shape = buttonShape,
+                                    clip = false
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = setupButtonBorderColor(number),
+                                    shape = buttonShape
+                                ),
+                            shape = buttonShape,
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 0.dp,
+                                pressedElevation = 0.dp,
+                                focusedElevation = 0.dp,
+                                hoveredElevation = 0.dp
+                            ),
                             onClick = {
                                 handleButtonClick(button = number)
                             },
@@ -259,6 +280,15 @@ private fun setupButtonTextColor(number: String): Color =
     }
 
 @Composable
+private fun setupButtonBorderColor(number: String): Color =
+    when (number) {
+        "C", "()", "%" -> Color(0xFFD0D0D0)
+        "/", "x", "-", "+", "=" -> Color(0xFFFFB347)
+        "+/-" -> Color(0xFF4A4A4A)
+        else -> Color(0xFF4A4A4A)
+    }
+
+@Composable
 fun DisplaySection(
     equation: String,
     result: String,
@@ -266,13 +296,8 @@ fun DisplaySection(
 ) {
     Box(
         modifier = modifier
-            .border(
-                width = 1.dp,
-                color = Color.DarkGray,
-                shape = RoundedCornerShape(size = 8.dp)
-            )
-            .clip(shape = RoundedCornerShape(size = 8.dp))
-            .background(Color.Black)
+            .clip(shape = RoundedCornerShape(size = 20.dp))
+            .background(Color(0xFF0B0B0B))
             .padding(all = 16.dp)
     ) {
         Column(
@@ -294,7 +319,7 @@ fun DisplaySection(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun CalculadoraScreenPreview() {
     CalculadoraScreen()
